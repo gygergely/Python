@@ -121,10 +121,10 @@ def list_all_contacts(contact_list):
     """
     if len(contact_list) > 0:
         for index, person in enumerate(contact_list, 1):
-            print("ID: " + str(index))
+            print('ID: ' + str(index))
             print(person.get_full_name())
             print(person.get_email_and_phone())
-            print("-" * 20)
+            print('-' * 20)
     else:
         print('Nobody listed in the contact list file.')
 
@@ -141,7 +141,7 @@ def add_new_contact(contact_list):
 
     new_contact = Contact(first_name=first_name, last_name=last_name, email=email, phone=phone)
     contact_list.append(new_contact)
-    print("")
+    print('')
     print('New contact: {} added to your contact list'.format(new_contact.get_full_name()))
 
 
@@ -154,7 +154,7 @@ def edit_contact(contact_list):
         print('Select the number of the contact you would like to edit:')
 
         for index, person in enumerate(contact_list, 1):
-            print(str(index) + ") " + person.get_full_name())
+            print(str(index) + ') ' + person.get_full_name())
 
         print('')
         selected_id_str = input('What contact would you like to edit? (enter ID number): ')
@@ -170,19 +170,19 @@ def edit_contact(contact_list):
 
                 if 1 <= detail_to_edit <= 5:
                     if detail_to_edit == 1:
-                        new_first_name = input("Please enter a new first name: ")
+                        new_first_name = input('Please enter a new first name: ')
                         selected_contact.first_name = new_first_name
                         change_type = 'First name'
                     elif detail_to_edit == 2:
-                        new_last_name = input("Please enter a new last name: ")
+                        new_last_name = input('Please enter a new last name: ')
                         selected_contact.last_name = new_last_name
                         change_type = 'Last name'
                     elif detail_to_edit == 3:
-                        new_email = input("Please enter a new email: ")
+                        new_email = input('Please enter a new email: ')
                         selected_contact.email = new_email
                         change_type = 'Email'
                     elif detail_to_edit == 4:
-                        new_phone = input("Please enter a new phone: ")
+                        new_phone = input('Please enter a new phone: ')
                         selected_contact.phone = new_phone
                         change_type = 'Phone'
 
@@ -216,10 +216,8 @@ def delete_contact(contact_list):
             selected_id = int(selected_id_str) - 1
             if 0 <= selected_id <= len(contact_list) - 1:
                 selected_contact = contact_list[int(selected_id)]
-                print('')
                 contact_list.remove(selected_contact)
-                print('')
-                print("Contact was successfully removed from your contact list.")
+                print('Contact was successfully removed from your contact list.')
             else:
                 print('Invalid selection.')
 
