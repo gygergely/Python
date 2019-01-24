@@ -37,12 +37,12 @@ def xl_file_to_csv(xl_file_file_path, sh_index):
 
     if work_book.Worksheets.count >= sh_index:
         csv_file_list = list()
-        if sheet_index == 0:
+        if sh_index == 0:
             for sheet in work_book.Worksheets:
                 work_sheet = sheet
                 csv_file_list = save_csv_file(work_sheet, csv_file_list)
         else:
-            work_sheet = work_book.Worksheets(sheet_index)
+            work_sheet = work_book.Worksheets(sh_index)
             csv_file_list = save_csv_file(work_sheet, csv_file_list)
 
         work_book.Close(SaveChanges=0)
