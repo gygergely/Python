@@ -31,6 +31,9 @@ for entry in entries:
                     row.append(entry.PropertyAccessor.GetProperty("http://schemas.microsoft.com/mapi/proptag/0x3a26001e"))
                 except:
                     row.append('None')
+                    
+                # Store the user details in data_set
+                data_set.append(row)
 
 # Print out the result to a csv with headers
 with open(date_id + 'outlookGALresults.csv', 'w', newline='', encoding='utf-8') as csv_file:
