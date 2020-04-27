@@ -3,6 +3,7 @@ import json
 import time
 import csv
 import math
+from timeit import default_timer as timer
 
 CONFIG_FILE = 'config.json'
 
@@ -97,14 +98,14 @@ if __name__ == '__main__':
     #start_latitude = 47.339733
     start_latitude = 47.510549
     #end_latitude = 47.636308
-    end_latitude = 47.519532
+    end_latitude = 47.528515
 
     #start_longitude = 18.928242
     start_longitude = 19.030952
     #end_longitude = 19.260952
-    end_longitude = 19.044251
+    end_longitude = 19.057551
 
-    meters_to_increase_search = 50
+    meters_to_increase_search = 150
 
     api = GooglePlacesAPIObj(get_api_key())
 
@@ -115,17 +116,21 @@ if __name__ == '__main__':
 
     actual_latitude = start_latitude
 
+    prog_start = timer()
+
     while actual_latitude < end_latitude:
 
         actual_longitude = start_longitude
 
         while actual_longitude < end_longitude:
+
             for srch_type in search_types:
+                start_time = timer()
 
                 coordinates = str(actual_latitude) + ', ' + str(actual_longitude)
 
                 print('Started to fetch: {}'.format(srch_type))
-                places = api.search_places_by_coordinate(coordinates, "100", srch_type)
+                places = api.search_places_by_coordinate(coordinates, "300", srch_type)
                 print(len(places))
 
                 fields_to_retrieve = ['name', 'formatted_address', 'types', 'url']
@@ -165,15 +170,29 @@ if __name__ == '__main__':
 
                             collected_places.append(place_row)
                         else:
-                            duplications.append(extended_id_list)
+                            dupl_row = list()
+                            dupl_row.append(place_extended_id)
+                            duplications.append(dupl_row)
+
+                    end_time = timer()
+                    search_param_row = list()
+                    search_param_row.append(actual_latitude)
+                    search_param_row.append(actual_longitude)
+                    search_param_row.append(round(end_time - start_time, 4))
+                    search_param_row.append(srch_type)
+                    search_parameters.append(search_param_row)
+
+                    print(
+                        str(actual_latitude) + '|' + str(actual_longitude) + '|' + str(round(end_time - start_time, 4)))
+
             actual_longitude = calc_new_longitude(actual_latitude, actual_longitude, meters_to_increase_search)
 
-            print(str(actual_latitude) + '|' + str(actual_longitude))
-            search_parameters.append(str(actual_latitude) + '|' + str(actual_longitude))
         actual_latitude = calc_new_latitude(actual_latitude, meters_to_increase_search)
 
+    prog_end = timer()
     print_list_to_csv(collected_places, 'result.csv')
     print_list_to_csv(duplications, 'duplications.csv')
     print_list_to_csv(search_parameters, 'search_parameters.csv')
+    print(round(prog_end-prog_start, 4))
 
 
