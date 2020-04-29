@@ -75,6 +75,12 @@ def replace_hungarian_characters(input_str):
 
 
 def calc_new_latitude(latitude, distance_in_meters):
+    """
+    Calculating new latitude by meter
+    :param latitude: starting latitude
+    :param distance_in_meters: move in meters
+    :return: new latitude
+    """
     earth = 6378.137  # radius of the earth in kilometer
     pi = math.pi
     m = (1 / ((2 * pi / 360) * earth)) / 1000  # 1 meter in degree
@@ -83,6 +89,13 @@ def calc_new_latitude(latitude, distance_in_meters):
 
 
 def calc_new_longitude(latitude, longitude, distance_in_meters):
+    """
+    Calculating new longitude
+    :param latitude: point latitude
+    :param longitude: starting longitude
+    :param distance_in_meters: move in meters
+    :return: new longitude
+    """
     earth = 6378.137  # radius of the earth in kilometer
     pi = math.pi
     cos = math.cos
@@ -90,6 +103,32 @@ def calc_new_longitude(latitude, longitude, distance_in_meters):
 
     new_longitude = longitude + (distance_in_meters * m) / cos(latitude * (pi / 180))
     return round(new_longitude, 6)
+
+
+def collect_place_details(place_resp, details_resp):
+
+    details_row = list()
+
+    details_row.append(place_resp['place_id'])
+
+    additional_keys_from_place = ['name', 'busines+s_status']
+
+    for key in additional_keys_from_place:
+        try:
+            details_row.append(replace_hungarian_characters(str(place_resp[key])))
+        except KeyError:
+            details_row.append('NotAvailable')
+
+    details_row.append(place_resp['geometry']['location']['lat'])
+    details_row.append(place_resp['geometry']['location']['lng'])
+
+    details_row.append(details_resp['result']['address_components'][4]['short_name'])
+    details_row.append(details_resp['result']['address_components'][3]['long_name'])
+    details_row.append(replace_hungarian_characters(str(details_resp['result']['formatted_address'])))
+    details_row.append(sorted(details_resp['result']['types']))
+    details_row.append(details_resp['result']['url'])
+
+    return details_row
 
 
 if __name__ == '__main__':
@@ -105,7 +144,8 @@ if __name__ == '__main__':
     #end_longitude = 19.260952
     end_longitude = 19.057551
 
-    meters_to_increase_search = 150
+    # meters to move the search circle midpoint (move on latitude or longitude
+    meters_to_increase_search = 420
 
     api = GooglePlacesAPIObj(get_api_key())
 
@@ -133,40 +173,22 @@ if __name__ == '__main__':
                 places = api.search_places_by_coordinate(coordinates, "300", srch_type)
                 print(len(places))
 
-                fields_to_retrieve = ['name', 'formatted_address', 'types', 'url']
+                fields_to_retrieve = ['name', 'formatted_address', 'types', 'url', 'address_component',
+                                      'permanently_closed']
 
                 if len(places) > 0:
                     for place in places:
-                        place_row = list()
-
                         place_extended_id = str(place['place_id']) + srch_type
 
                         if (extended_id_list.count(place_extended_id) == 0) or (len(extended_id_list) == 0):
                             details = api.get_place_details(place['place_id'], fields_to_retrieve)
                             extended_id_list.append(place_extended_id)
 
+                            place_row = list()
                             place_row.append(place_extended_id)
-                            place_row.append(place['place_id'])
-
-                            additional_keys_from_place = ['name', 'business_status']
-
-                            for key in additional_keys_from_place:
-                                try:
-                                    place_row.append(place[key])
-                                except KeyError:
-                                    place_row.append('NotAvailable')
-
-                            place_row.append(place['geometry']['location']['lat'])
-                            place_row.append(place['geometry']['location']['lng'])
-                            place_row.append(details['result']['formatted_address'])
-                            place_row.append(details['result']['types'])
-                            place_row.append(details['result']['url'])
                             place_row.append(srch_type)
 
-                            item_to_check = [2, 6]
-
-                            for item in item_to_check:
-                                place_row[item] = replace_hungarian_characters(str(place_row[item]))
+                            place_row = collect_place_details(place, details)
 
                             collected_places.append(place_row)
                         else:
@@ -175,11 +197,11 @@ if __name__ == '__main__':
                             duplications.append(dupl_row)
 
                     end_time = timer()
-                    search_param_row = list()
-                    search_param_row.append(actual_latitude)
-                    search_param_row.append(actual_longitude)
-                    search_param_row.append(round(end_time - start_time, 4))
-                    search_param_row.append(srch_type)
+                    search_param_row = [actual_latitude,
+                                        actual_longitude,
+                                        round(end_time - start_time, 4),
+                                        srch_type]
+
                     search_parameters.append(search_param_row)
 
                     print(
