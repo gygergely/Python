@@ -49,6 +49,10 @@ class GooglePlacesAPIObj(object):
 
 
 def get_api_key():
+    """
+    Load the API key from the config file
+    :return: API key (string)
+    """
     with open(CONFIG_FILE) as config_file:
         data = json.load(config_file)
 
@@ -56,12 +60,23 @@ def get_api_key():
 
 
 def print_list_to_csv(input_list, file_name):
+    """
+    print a list to a csv file
+    :param input_list: list to print to a csv
+    :param file_name: csv file name
+    :return: None
+    """
     with open(file_name, 'w', newline="", encoding='utf-8') as result_file:
         wr = csv.writer(result_file)
         wr.writerows(input_list)
 
 
 def replace_hungarian_characters(input_str):
+    """
+    Replacing hungarian characters in a string
+    :param input_str: text to search for hungarian characters
+    :return: string without special hungarian characters
+    """
     old_char = ['á', 'é', 'í', 'ó', 'ö', 'ő', 'ü', 'ű', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ö', 'Ő', 'Ü', 'Ű', 'Ú']
     new_char = ['a', 'e', 'i', 'o', 'o', 'o', 'u', 'u', 'u', 'A', 'E', 'I', 'O', 'O', 'O', 'U', 'U', 'U']
 
