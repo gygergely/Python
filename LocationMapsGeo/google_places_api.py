@@ -146,6 +146,26 @@ def collect_place_details(place_resp, details_resp):
     return details_row
 
 
+def haversine_formula(lat1, lon1, lat2, lon2, uom):
+    """
+    source: https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+    """
+
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(math.radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a))
+    r = 6371  # Radius of earth in kilometers. Use 3956 for miles
+    if uom == 'm':
+        return round(c * r * 1000, 0)
+    elif uom == 'km':
+        return round(c*r, 2)
+
+
 if __name__ == '__main__':
     collected_places = list()
 
@@ -212,6 +232,7 @@ if __name__ == '__main__':
                             duplications.append(dupl_row)
 
                     end_time = timer()
+                    
                     search_param_row = [actual_latitude,
                                         actual_longitude,
                                         round(end_time - start_time, 4),
