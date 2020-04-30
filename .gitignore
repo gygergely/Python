@@ -1,8 +1,8 @@
 .idea/
 DataQuestIO_DataAnalystPython/.ipynb_checkpoints/
 DataQuestIO_DataAnalystPython/src/
-LocationMapsGeo/api_keys.py
-LocationMapsGeo/config.json
-LocationMapsGeo/duplications.csv
-LocationMapsGeo/result.csv
-LocationMapsGeo/search_parameters.csv
+LocationMapsGeo/Google_Places/api_keys.py
+LocationMapsGeo/Google_Places/config.json
+LocationMapsGeo/Google_Places/duplications.csv
+LocationMapsGeo/Google_Places/result.csv
+LocationMapsGeo/Google_Places/search_parameters.csv
